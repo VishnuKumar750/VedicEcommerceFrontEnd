@@ -8,6 +8,7 @@ import Cart from './navbar/cart'
 import { Link, useParams } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import Fav from './navbar/Fav'
+import Login from './Login'
 
 const Navbar = () => {
    const [openMenu, setOpenMenu ] = useState(false);
@@ -18,6 +19,10 @@ const Navbar = () => {
    
    const { cartItems } = useSelector(state => state.cart )
    const { favItems } = useSelector(state => state.fav )
+
+   const { isAuthenticated } = useSelector((state) => state.user)
+
+   const [ showLogin, setShowLogin ] = useState(false);
 
    const changeBg = () => {
       if(window.scrollY >= 60) {
@@ -43,19 +48,25 @@ const Navbar = () => {
     <header className={`z-[999] ${bg ? 'bg-white shadow-md  transition-all delay-800' : 'transparent transition-all delay-300'} sm:fixed w-full`}>
       <div className={'text-xl hidden sm:flex flex-col sm:flex-row items-start px-[1.5em] sm:items-center justify-between bg-[#282828] p-3 text-[#ffffff] font-normal leading-8'}>
       <p className='text-[1rem] font-mono'>Free shipping for standard order over 500
-      
-      
-      
-
       </p>
-      <p className='text-[1rem] font-mono cursor-pointer '>
-         <Link to={`/Account/?id=${1}`}>
-         My Account
-         </Link>
-         </p>
+      
+      {isAuthenticated ? (
+            <p className='text-[1rem] font-mono cursor-pointer'>
+            <Link to={`/Account/?id=${1}`}>
+              My Account
+            </Link>
+            </p>
+          ) : (
+            <div className='flex items-center'>
+              <p className='text-[1rem] font-mono cursor-pointer' onClick={() => setShowLogin(true)}>
+              Login
+          </p>
+          <p className='text-[1rem] font-mono cursor-pointer mx-4' onClick={() => setShowLogin(true)}>
+              Register
+          </p>
+            </div>
+          )}
     </div>
-
-
       <div className='flex items-center justify-between p-3 px-[2em] shadow-sm'>
       <div className='flex items-center'>
       <h1 className='text-3xl'>VEDIC</h1>
@@ -93,7 +104,7 @@ const Navbar = () => {
       </div>
 
       <div className={`sm:hidden transform transition-all  ${openMenu ? 'translate-y-200': 'hidden'} `}>
-         <Head />
+         <Head setShowLogin={setShowLogin} />
          <NavList menu={menu} />
       </div>
       {
@@ -108,7 +119,9 @@ const Navbar = () => {
          <Fav setShowFav={setShowFav} showfav={showfav} />
       }
 
-
+      {showLogin && 
+      <Login setShowLogin={setShowLogin} />
+      }
     </header>
   )
 }

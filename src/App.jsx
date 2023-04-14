@@ -9,12 +9,13 @@ import NotFound from './pages/NotFound'
 import Home from './pages/Home'
 import Checkout from './pages/Checkout';
 import { getCartItemsFromLocalStorage } from './redux/cart';
-import { useDispatch } from 'react-redux'
-import { useEffect } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { useEffect, useState } from 'react'
 import { getFavouriteItemsFromLocalStorage } from './redux/favourite'
 import Account from './pages/Account'
 import { fetchCategoriesSuccess } from './redux/categories'
 import { ToastContainer } from 'react-toastify'
+import Login from './component/Login'
 
 function App() {
   const dispatch = useDispatch();
@@ -34,6 +35,9 @@ function App() {
     dispatch(getFavouriteItemsFromLocalStorage());
   });
 
+  const { isAuthenticated } = useSelector((state) => state.user)
+  const [ showLogin, setShowLogin ] = useState(false)
+
   return (
     <BrowserRouter>
     <Navbar />
@@ -46,7 +50,6 @@ function App() {
       <Route path="/checkout-Product" element={<Checkout />} />
     </Routes>
     <Footer />
-    
 
     </BrowserRouter>
   )

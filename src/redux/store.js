@@ -4,6 +4,7 @@ import { favouriteReducer } from "./favourite";
 import { singleProductReducer } from "./singleProduct";
 import { productReducer } from "./product";
 import { categoriesReducer } from "./categories";
+import { userReducer } from "./user";
 
 export default configureStore({
    reducer: {
@@ -12,5 +13,6 @@ export default configureStore({
       CurrP: singleProductReducer,
       product: productReducer,
       category: categoriesReducer,
+      user: userReducer,
    },
 })
