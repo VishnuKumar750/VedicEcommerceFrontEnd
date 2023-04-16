@@ -14,29 +14,32 @@ import { useEffect, useState } from 'react'
 import { getFavouriteItemsFromLocalStorage } from './redux/favourite'
 import Account from './pages/Account'
 import { fetchCategoriesSuccess } from './redux/categories'
-import { ToastContainer } from 'react-toastify'
-import Login from './component/Login'
+import { BASE_URL } from '../constants'
+import Success from './pages/Success'
+import Cookies from 'js-cookie'
+import { INITIALIZE_USER } from './redux/user'
 
 function App() {
   const dispatch = useDispatch();
 
   const fetchCategoryData = async () => {
-    const response = await fetch('https://dummyjson.com/products/categories');
+    const response = await fetch(`${BASE_URL}/categories/get`);
     const data = await response.json();
-    console.log(data);
+    // console.log(data);
     
-    dispatch(fetchCategoriesSuccess(data));
+    dispatch(fetchCategoriesSuccess(data[0].categories));
   }
 
-
   useEffect(() => {
+    dispatch(INITIALIZE_USER())
     fetchCategoryData()
     dispatch(getCartItemsFromLocalStorage());
     dispatch(getFavouriteItemsFromLocalStorage());
-  });
+  }, []);
 
   const { isAuthenticated } = useSelector((state) => state.user)
   const [ showLogin, setShowLogin ] = useState(false)
+
 
   return (
     <BrowserRouter>
@@ -48,6 +51,7 @@ function App() {
       <Route path="*" element={<NotFound />} />
       <Route path='/Account' element={<Account />} />
       <Route path="/checkout-Product" element={<Checkout />} />
+      <Route path='/checkout-success' element={<Success />} />
     </Routes>
     <Footer />
 

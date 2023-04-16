@@ -29,7 +29,7 @@ const ProductPreview = ({ lightbox, setLightbox }) => {
   const handleCart = () => {
     const item = { 
       id: product.id,
-      title: product.name,
+      title: product.title,
       image: product.images[0],
       Price: product.price, 
       quantity, 

@@ -32,7 +32,7 @@ const Product = () => {
    const fetchProducts = async (search, cat) => {
       try {
          dispatch(fetchProductsStart());
-         console.log(cat);
+         // console.log(cat);
          
          const result = await fetch(`https://dummyjson.com/products?limit=100`)
          const data = await result.json();
@@ -66,12 +66,12 @@ const Product = () => {
                   
     const minPrice = parseFloat(priceRange[0].replace('₹', '').replace(',', ''));
     const maxPrice = parseFloat(priceRange[1].replace('₹', '').replace(',', ''));
-    console.log(minPrice, maxPrice);
+   //  console.log(minPrice, maxPrice);
     return (item.price >= minPrice && item.price <= maxPrice);
                }
             })
           }
-         console.log(data)
+         // console.log(data)
 
          dispatch(fetchProductsStart())
 

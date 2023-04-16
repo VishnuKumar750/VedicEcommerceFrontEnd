@@ -10,20 +10,21 @@ const Head = ({ setShowLogin }) => {
       <p className='text-[1rem] font-mono'>Free shipping for standard order over 500</p>
       
       {isAuthenticated ? (
+        <>
         <p className='text-[1rem] font-mono cursor-pointer'>
         <Link to={`/Account/?id=${1}`}>
           My Account
         </Link>
         </p>
+        <p className='text-[1rem] font-mono cursor-pointer'>LogOut</p>
+        </>
+
       ) : (
         <div className='flex items-center'>
           <p className='text-[1rem] font-mono cursor-pointer' onClick={() => setShowLogin(true)}>
-          Login
+          Login / Register
       </p>
-      <p className='text-[1rem] font-mono cursor-pointer mx-4' onClick={() => setShowLogin(true)}>
-          Register
-      </p>
-        </div>
+      </div>
       )}
       
     </div>

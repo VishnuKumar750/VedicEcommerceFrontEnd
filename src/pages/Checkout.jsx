@@ -1,15 +1,31 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useSelector } from 'react-redux';
+import { BASE_URL } from '../../constants';
+import axios from 'axios';
 
 const Checkout = () => {
   const { cartItems, subtotal } = useSelector(state => state.cart)
 
-  const handleCheckout = () => {
-    if(cartItems && cartItems.length > 0) {
-      console.log('checkout');
-    } else {
-      alert('Your cart is empty');
+
+  const handleCheckout = async () => {
+    console.log(BASE_URL);
+    try {
+      const res = await axios.post(`${BASE_URL}/payment/create-checkout-session`, {
+        cartItems
+    })
+      if(res.data.url) {
+        window.location.href = res.data.url;
+      }
+    } catch (error) {
+      
     }
+    
+    // if(cartItems && cartItems.length > 0) {
+    //   console.log('checkout');
+
+    // } else {
+    //   alert('Your cart is empty');
+    // }
   }
 
   return (
@@ -41,9 +57,7 @@ const Checkout = () => {
           <p className={`${cartItems.length > 0 ? 'block' : 'hidden'} font-bold text-[1rem] sm:text-[1.2rem] px- mx-4`}>subtotal: &#8377;{(subtotal).toFixed(2)}</p>
         </div>
         <div className='w-full flex items-center justify-end py-4'>
-        <form action="/create-checkout-session" method="POST">
-        <button className={`bg-sky-500 px-4 py-2 rounded-lg mx-4 text-white font-bold font-sans ${cartItems.length > 0 ? 'block': 'hidden'}`} type="submit">CheckOut</button>
-        </form>
+        <button className={`bg-sky-500 px-4 py-2 rounded-lg mx-4 text-white font-bold font-sans ${cartItems.length > 0 ? 'block': 'hidden'}`} onClick={handleCheckout}>CheckOut</button>
         </div>
       </div>
     </div>

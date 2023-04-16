@@ -1,5 +1,10 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { AiOutlineClose } from 'react-icons/ai';
+import { BASE_URL } from '../../constants';
+import axios from 'axios';
+import { useDispatch, useSelector } from 'react-redux';
+import { LOGIN_START, LOGIN_SUCCESSFUL } from '../redux/user';
+import Cookies from 'js-cookie';
 
 
 const LoginForm = ({ onSubmit }) => {
@@ -20,7 +25,9 @@ const LoginForm = ({ onSubmit }) => {
               className="peer block min-h-[auto] w-full rounded border-0 bg-transparent  py-[0.32rem] leading-[2.15] outline-none transition-all duration-200 
               border-b-[.1em] ease-linear focus:placeholder:opacity-100 data-[te-input-state-active]:placeholder:opacity-100 motion-reduce:transition-none dark:text-neutral-200 dark:placeholder:text-neutral-200 [&:not([data-te-input-placeholder-active])]:placeholder:opacity-0"
               id="exampleFormControlInput3"
-              placeholder="Email address" />
+              placeholder="Email address" 
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}/>
             <label
               htmlFor="exampleFormControlInput3"
               className="pointer-events-none absolute left-0 top-0 mb-0 max-w-[90%] origin-[0_0] truncate pt-[0.37rem] leading-[2.15] text-neutral-500 transition-all duration-200 ease-out peer-focus:-translate-y-[1.15rem] peer-focus:scale-[0.8] peer-focus:text-primary peer-data-[te-input-state-active]:-translate-y-[1.15rem] peer-data-[te-input-state-active]:scale-[0.8] motion-reduce:transition-none dark:text-neutral-200 dark:peer-focus:text-primary"
@@ -33,7 +40,10 @@ const LoginForm = ({ onSubmit }) => {
               type="password"
               className="peer block min-h-[auto] w-full border-b-[.1em] rounded border-0 bg-transparent py-[0.32rem] leading-[2.15] outline-none transition-all duration-200 ease-linear focus:placeholder:opacity-100 data-[te-input-state-active]:placeholder:opacity-100 motion-reduce:transition-none dark:text-neutral-200 dark:placeholder:text-neutral-200 [&:not([data-te-input-placeholder-active])]:placeholder:opacity-0"
               id="exampleFormControlInput33"
-              placeholder="Password" />
+              placeholder="Password" 
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              />
             <label
               htmlFor="exampleFormControlInput33"
               className="pointer-events-none absolute left-0 top-0 mb-0 max-w-[90%] origin-[0_0] truncate pt-[0.37rem] leading-[2.15] text-neutral-500 transition-all duration-200 ease-out peer-focus:-translate-y-[1.15rem] peer-focus:scale-[0.8] peer-focus:text-primary peer-data-[te-input-state-active]:-translate-y-[1.15rem] peer-data-[te-input-state-active]:scale-[0.8] motion-reduce:transition-none dark:text-neutral-200 dark:peer-focus:text-primary"
@@ -145,12 +155,32 @@ const RegisterForm = ({ onSubmit }) => {
    );
  };
 
-const Login = ({setShowLogin} ) => {
+const Login = ({ setShowLogin } ) => {
 
    const [isLogin, setIsLogin] = useState(true);
+   const dispatch = useDispatch();
 
-  const handleLogin = ({ email, password }) => {
-   
+   const { isAuthenticated } = useSelector(state => state.user)
+
+   useEffect(() => {
+   }, [isAuthenticated])
+
+  const handleLogin = async ({ email, password }) => {
+    dispatch(LOGIN_START())
+    try {
+      
+      const { data } = await axios.post(`${BASE_URL}/auth/login`, { email, password });
+  
+      if(data) {
+         const { email, username, img, _id, accessToken } = data;
+         dispatch(LOGIN_SUCCESSFUL({ email, username, img, _id, accessToken }))
+      }
+  
+      isAuthenticated && setShowLogin(false);
+      console.log(data);
+    } catch (error) {
+      
+    }
   };
 
   const handleRegister = ({ email, password, confirmPassword }) => {
@@ -162,7 +192,7 @@ const Login = ({setShowLogin} ) => {
     onRegister({ email, password });
   };
 
-  console.log(setShowLogin);
+  // console.log(setShowLogin);
   return (
     <div className='z-[9999] left-0 fixed  bg-gray-900 bg-opacity-50 top-0 w-full h-full  flex items-center justify-center'>
       <AiOutlineClose className='absolute top-10 sm:top-0 lg:top-10 right-10 text-[2rem] font-bold cursor-pointer text-white' onClick={() => setShowLogin(false)} />

@@ -3,7 +3,6 @@ import React from 'react'
 import { GrClose } from 'react-icons/gr'
 import CartCard from './CartCard'
 import { Link, useNavigate } from 'react-router-dom'
-import { productData } from '../../../dummyData'
 import { useSelector } from 'react-redux'
 
 const Cart = ({ showCart, setShowCart}) => {
@@ -11,9 +10,13 @@ const Cart = ({ showCart, setShowCart}) => {
    const navigate = useNavigate()
    
    const RedirectToCheckout = () => {
+      setShowCart(!showCart)
       if(cartItems && cartItems.length > 0) {
-         console.log('checkout');
-         navigate('/checkout-Product');
+         console.log(showCart)
+         console.log(showCart)
+         setTimeout(() => {
+            navigate('/checkout-Product');
+         }, 2000);
       } else {
          alert('Your cart is empty');
       }

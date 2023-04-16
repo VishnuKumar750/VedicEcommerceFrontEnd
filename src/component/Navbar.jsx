@@ -6,9 +6,10 @@ import Head from './navbar/Head'
 import NavList from './navbar/NavList'
 import Cart from './navbar/cart'
 import { Link, useParams } from 'react-router-dom'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import Fav from './navbar/Fav'
 import Login from './Login'
+import { LOGOUT } from '../redux/user'
 
 const Navbar = () => {
    const [openMenu, setOpenMenu ] = useState(false);
@@ -20,6 +21,7 @@ const Navbar = () => {
    const { cartItems } = useSelector(state => state.cart )
    const { favItems } = useSelector(state => state.fav )
 
+   const dispatch = useDispatch();
    const { isAuthenticated } = useSelector((state) => state.user)
 
    const [ showLogin, setShowLogin ] = useState(false);
@@ -42,6 +44,10 @@ const Navbar = () => {
       { id: 1, title: 'About us', link: '/About' },
       { id: 2, title: 'Contact us', link: '/Contact' },
    ]
+
+   const handleLogout = () => {
+      dispatch(LOGOUT())
+   }
    
 
   return (
@@ -51,18 +57,18 @@ const Navbar = () => {
       </p>
       
       {isAuthenticated ? (
-            <p className='text-[1rem] font-mono cursor-pointer'>
+            <div className='flex items-center'>
+            <p className='text-[1rem] font-mono cursor-pointer mx-4 border-r-2 px-4'>
             <Link to={`/Account/?id=${1}`}>
               My Account
             </Link>
             </p>
+            <p className='text-[1rem] font-mono cursor-pointer' onClick={handleLogout}>LogOut</p>
+            </div>
           ) : (
             <div className='flex items-center'>
               <p className='text-[1rem] font-mono cursor-pointer' onClick={() => setShowLogin(true)}>
-              Login
-          </p>
-          <p className='text-[1rem] font-mono cursor-pointer mx-4' onClick={() => setShowLogin(true)}>
-              Register
+              Login / Register
           </p>
             </div>
           )}
