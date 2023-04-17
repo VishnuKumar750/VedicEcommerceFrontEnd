@@ -14,7 +14,7 @@ import { useEffect, useState } from 'react'
 import { getFavouriteItemsFromLocalStorage } from './redux/favourite'
 import Account from './pages/Account'
 import { fetchCategoriesSuccess } from './redux/categories'
-import { BASE_URL } from '../constants'
+import { BASE_URL, PRODUCTION_URL } from '../constants'
 import Success from './pages/Success'
 import Cookies from 'js-cookie'
 import { INITIALIZE_USER } from './redux/user'
@@ -23,7 +23,7 @@ function App() {
   const dispatch = useDispatch();
 
   const fetchCategoryData = async () => {
-    const response = await fetch(`${BASE_URL}/categories/get`);
+    const response = await fetch(`${PRODUCTION_URL || BASE_URL}/categories/get`);
     const data = await response.json();
     // console.log(data);
     
@@ -35,7 +35,7 @@ function App() {
     fetchCategoryData()
     dispatch(getCartItemsFromLocalStorage());
     dispatch(getFavouriteItemsFromLocalStorage());
-  }, []);
+  }, [dispatch]);
 
   const { isAuthenticated } = useSelector((state) => state.user)
   const [ showLogin, setShowLogin ] = useState(false)

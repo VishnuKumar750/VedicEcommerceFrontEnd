@@ -6,11 +6,11 @@ import axios from 'axios';
 const Checkout = () => {
   const { cartItems, subtotal } = useSelector(state => state.cart)
 
-
   const handleCheckout = async () => {
-    console.log(BASE_URL);
+    // console.log(BASE_URL);
     try {
       const res = await axios.post(`${BASE_URL}/payment/create-checkout-session`, {
+        url: window.location.origin,
         cartItems
     })
       if(res.data.url) {

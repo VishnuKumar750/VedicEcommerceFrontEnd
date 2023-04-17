@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { AiOutlineClose } from 'react-icons/ai';
-import { BASE_URL } from '../../constants';
+import { BASE_URL, PRODUCTION_URL } from '../../constants';
 import axios from 'axios';
 import { useDispatch, useSelector } from 'react-redux';
 import { LOGIN_START, LOGIN_SUCCESSFUL } from '../redux/user';
@@ -169,7 +169,7 @@ const Login = ({ setShowLogin } ) => {
     dispatch(LOGIN_START())
     try {
       
-      const { data } = await axios.post(`${BASE_URL}/auth/login`, { email, password });
+      const { data } = await axios.post(`${ PRODUCTION_URL || BASE_URL}/auth/login`, { email, password });
   
       if(data) {
          const { email, username, img, _id, accessToken } = data;
