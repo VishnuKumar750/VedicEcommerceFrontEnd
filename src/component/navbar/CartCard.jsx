@@ -1,6 +1,4 @@
-import React, { useState } from 'react'
-import { FaPlus, FaMinus } from 'react-icons/fa'
-import shirt  from '../../assets/shirt.jpg'
+import React from 'react'
 import { AiOutlineClose } from 'react-icons/ai';
 import { useDispatch } from 'react-redux';
 import { removeFromCart } from '../../redux/cart';

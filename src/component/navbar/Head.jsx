@@ -12,7 +12,7 @@ const Head = ({ setShowLogin }) => {
       {isAuthenticated ? (
         <>
         <p className='text-[1rem] font-mono cursor-pointer'>
-        <Link to={`/Account/?id=${1}`}>
+        <Link to={`/Account/`}>
           My Account
         </Link>
         </p>

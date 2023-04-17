@@ -5,6 +5,7 @@ import axios from 'axios';
 import { useDispatch, useSelector } from 'react-redux';
 import { LOGIN_START, LOGIN_SUCCESSFUL } from '../redux/user';
 import Cookies from 'js-cookie';
+import { FaUserCircle } from 'react-icons/fa';
 
 
 const LoginForm = ({ onSubmit }) => {
@@ -75,72 +76,171 @@ const LoginForm = ({ onSubmit }) => {
  
 const RegisterForm = ({ onSubmit }) => {
    const [email, setEmail] = useState('');
+   const [emailError, setEmailError] = useState('');
    const [username, setUsername] = useState('');
+   const [usernameError, setUsernameError] = useState('');
    const [password, setPassword] = useState('');
+   const [passwordError, setPasswordError] = useState('');
    const [confirmPassword, setConfirmPassword] = useState('');
- 
-   const handleSubmit = (event) => {
-     event.preventDefault();
-     onSubmit({ email, username, password, confirmPassword, avatar });
-   };
+   const [confirmPasswordError, setConfirmPasswordError] = useState('');
+   const [avatar, setAvatar] = useState(null);
+   const [avatarPreview, setAvatarPreview] = useState(null);
+   
+
+  const handleAvatarChange = (e) => {
+      const reader = new FileReader();
+      
+      reader.onload = () => {
+          if(reader.readyState === 2) {
+              setAvatarPreview(reader.result);
+              setAvatar(reader.result);
+          }
+      }
+      reader.readAsDataURL(e.target.files[0]);
+  }
+
+  const validateEmail = () => {
+    if (!email) {
+      setEmailError('Email is required.');
+    } else if (!/\S+@\S+\.\S+/.test(email)) {
+      setEmailError('Invalid email format.');
+    } else {
+      setEmailError('');
+    }
+  };
+
+  const validateUsername = () => {
+    if (!username) {
+      setUsernameError('Username is required.');
+    } else {
+      setUsernameError('');
+    }
+  };
+  
+  const validatePassword = () => {
+    if (!password) {
+      setPasswordError('Password is required.');
+    } else if (password.length > 5) {
+      setPasswordError('Password must be at least 6 characters long.');
+    } else {
+      setPasswordError('');
+    }
+  };
+  
+  const validateConfirmPassword = () => {
+    if (!confirmPassword) {
+      setConfirmPasswordError('Please confirm your password.');
+    } else if (password !== confirmPassword) {
+      setConfirmPasswordError('Passwords do not match.');
+    } else {
+      setConfirmPasswordError('');
+    }
+  };
+
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+  
+    validateEmail();
+    validateUsername();
+    validatePassword();
+    validateConfirmPassword();
+  
+    
+  
+    onSubmit({ username, email, password, confirmPassword, avatar });
+  };
  
  
    return (
      <form onSubmit={handleSubmit} className='px-8'>
-      
+      <div className="relative mb-6 flex items-center justify-between" data-te-input-wrapper-init>
+        { !avatarPreview ?
+          <FaUserCircle className='text-white w-12 h-12'/>
+          :
+          <img src={avatarPreview} alt="avatar" className='w-12 h-12 '/>
+        }
+            <label htmlFor='avatar' className='text-white cursor-pointer border-2 w-[80%] text-center py-2'>upload Image</label>
+            <input
+              type="file"
+              accept='image/*'
+              className="hidden"
+              id="avatar"
+              onChange={handleAvatarChange}
+              />
+          </div>
+    
        <div className="relative mb-6" data-te-input-wrapper-init>
             <input
               type="text"
-              className="peer block min-h-[auto] w-full rounded border-0 bg-transparent  py-[0.32rem] leading-[2.15] outline-none transition-all duration-200 
-              border-b-[.1em] ease-linear focus:placeholder:opacity-100 data-[te-input-state-active]:placeholder:opacity-100 motion-reduce:transition-none dark:text-neutral-200 dark:placeholder:text-neutral-200 [&:not([data-te-input-placeholder-active])]:placeholder:opacity-0"
-              id="exampleFormControlInput3"
-              placeholder="Email address" />
+              className="peer block min-h-[auto] w-full rounded border-0 bg-transparent  py-[0.32rem] leading-[2.15] outline-none transition-all duration-200 px-4 
+              border-b-[.1em] ease-linear border-neutral-300 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-200 dark:peer-focus:border-primary"
+              id="name"
+              placeholder="User Name"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              />
             <label
-              htmlFor="exampleFormControlInput3"
-              className="pointer-events-none absolute left-0 top-0 mb-0 max-w-[90%] origin-[0_0] truncate pt-[0.37rem] leading-[2.15] text-neutral-500 transition-all duration-200 ease-out peer-focus:-translate-y-[1.15rem] peer-focus:scale-[0.8] peer-focus:text-primary peer-data-[te-input-state-active]:-translate-y-[1.15rem] peer-data-[te-input-state-active]:scale-[0.8] motion-reduce:transition-none dark:text-neutral-200 dark:peer-focus:text-primary"
+              htmlFor="name"
+              className="pointer-events-none absolute left-0 top-0 mb-0 max-w-[90%] origin-[0_0] truncate pt-[0.37rem] leading-[2.15] text-neutral-500 transition-all duration-200 ease-out -translate-y-[1.15rem] peer-focus:scale-[0.8] peer-focus:text-primary peer-data-[te-input-state-active]:-translate-y-[1.15rem] peer-data-[te-input-state-active]:scale-[0.8] motion-reduce:transition-none dark:text-neutral-200 dark:peer-focus:text-primary"
               >Name
             </label>
+            {usernameError && <span className='text-red-500'>{usernameError}</span>}
           </div>
 
 
        <div className="relative mb-6" data-te-input-wrapper-init>
             <input
-              type="text"
-              className="peer block min-h-[auto] w-full rounded border-0 bg-transparent  py-[0.32rem] leading-[2.15] outline-none transition-all duration-200 
-              border-b-[.1em] ease-linear focus:placeholder:opacity-100 data-[te-input-state-active]:placeholder:opacity-100 motion-reduce:transition-none dark:text-neutral-200 dark:placeholder:text-neutral-200 [&:not([data-te-input-placeholder-active])]:placeholder:opacity-0"
-              id="exampleFormControlInput3"
-              placeholder="Email address" />
+              type="email"
+              className="peer block min-h-[auto] w-full rounded border-0 bg-transparent  py-[0.32rem] leading-[2.15] outline-none transition-all duration-200 px-4 
+              border-b-[.1em] ease-linear border-neutral-300 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-200 dark:peer-focus:border-primary"
+              id="email"
+              value={email}
+              placeholder="Email address" onChange={(e) => setEmail(e.target.value)}/>
             <label
-              htmlFor="exampleFormControlInput3"
-              className="pointer-events-none absolute left-0 top-0 mb-0 max-w-[90%] origin-[0_0] truncate pt-[0.37rem] leading-[2.15] text-neutral-500 transition-all duration-200 ease-out peer-focus:-translate-y-[1.15rem] peer-focus:scale-[0.8] peer-focus:text-primary peer-data-[te-input-state-active]:-translate-y-[1.15rem] peer-data-[te-input-state-active]:scale-[0.8] motion-reduce:transition-none dark:text-neutral-200 dark:peer-focus:text-primary"
+              htmlFor="email"
+              className="pointer-events-none absolute left-0 top-0 mb-0 max-w-[90%] origin-[0_0] truncate pt-[0.37rem] leading-[2.15] text-neutral-500 transition-all duration-200 ease-out -translate-y-[1.15rem] peer-focus:scale-[0.8] peer-focus:text-primary peer-data-[te-input-state-active]:-translate-y-[1.15rem] peer-data-[te-input-state-active]:scale-[0.8] motion-reduce:transition-none dark:text-neutral-200 dark:peer-focus:text-primary"
               >Email address
             </label>
+
+            {emailError && <span className='text-red-400'>{emailError}</span>}
           </div>
 
           <div className="relative mb-6" data-te-input-wrapper-init>
             <input
               type="password"
-              className="peer block min-h-[auto] w-full border-b-[.1em] rounded border-0 bg-transparent py-[0.32rem] leading-[2.15] outline-none transition-all duration-200 ease-linear focus:placeholder:opacity-100 data-[te-input-state-active]:placeholder:opacity-100 motion-reduce:transition-none dark:text-neutral-200 dark:placeholder:text-neutral-200 [&:not([data-te-input-placeholder-active])]:placeholder:opacity-0"
-              id="exampleFormControlInput33"
-              placeholder="Password" />
+              className="peer block min-h-[auto] w-full rounded border-0 bg-transparent  py-[0.32rem] leading-[2.15] outline-none transition-all duration-200 px-4 
+              border-b-[.1em] ease-linear border-neutral-300 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-200 dark:peer-focus:border-primary"
+              id="password"
+              value={password}
+              placeholder="Password" onChange={(e) => setPassword(e.target.value)}
+              />
             <label
-              htmlFor="exampleFormControlInput33"
-              className="pointer-events-none absolute left-0 top-0 mb-0 max-w-[90%] origin-[0_0] truncate pt-[0.37rem] leading-[2.15] text-neutral-500 transition-all duration-200 ease-out peer-focus:-translate-y-[1.15rem] peer-focus:scale-[0.8] peer-focus:text-primary peer-data-[te-input-state-active]:-translate-y-[1.15rem] peer-data-[te-input-state-active]:scale-[0.8] motion-reduce:transition-none dark:text-neutral-200 dark:peer-focus:text-primary"
+              htmlFor="password"
+              className="pointer-events-none absolute left-0 top-0 mb-0 max-w-[90%] origin-[0_0] truncate pt-[0.37rem] leading-[2.15] text-neutral-500 transition-all duration-200 ease-out -translate-y-[1.15rem] peer-focus:scale-[0.8] peer-focus:text-primary peer-data-[te-input-state-active]:-translate-y-[1.15rem] peer-data-[te-input-state-active]:scale-[0.8] motion-reduce:transition-none dark:text-neutral-200 dark:peer-focus:text-primary"
               >Password
             </label>
+            
+            {passwordError && <span className='text-red-500'>{passwordError}</span>}
+
           </div>
 
           <div className="relative mb-6" data-te-input-wrapper-init>
             <input
               type="password"
-              className="peer block min-h-[auto] w-full border-b-[.1em] rounded border-0 bg-transparent py-[0.32rem] leading-[2.15] outline-none transition-all duration-200 ease-linear focus:placeholder:opacity-100 data-[te-input-state-active]:placeholder:opacity-100 motion-reduce:transition-none dark:text-neutral-200 dark:placeholder:text-neutral-200 [&:not([data-te-input-placeholder-active])]:placeholder:opacity-0"
-              id="exampleFormControlInput34"
-              placeholder="Password" />
+              className="peer block min-h-[auto] w-full rounded border-0 bg-transparent  py-[0.32rem] leading-[2.15] outline-none transition-all duration-200 px-4 
+              border-b-[.1em] ease-linear border-neutral-300 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-200 dark:peer-focus:border-primary"
+              id="confirmPassword"
+              placeholder="Password" 
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              />
             <label
-              htmlFor="exampleFormControlInput34"
-              className="pointer-events-none absolute left-0 top-0 mb-0 max-w-[90%] origin-[0_0] truncate pt-[0.37rem] leading-[2.15] text-neutral-500 transition-all duration-200 ease-out peer-focus:-translate-y-[1.15rem] peer-focus:scale-[0.8] peer-focus:text-primary peer-data-[te-input-state-active]:-translate-y-[1.15rem] peer-data-[te-input-state-active]:scale-[0.8] motion-reduce:transition-none dark:text-neutral-200 dark:peer-focus:text-primary"
+              htmlFor="confirmPassword"
+              className="pointer-events-none absolute left-0 top-0 mb-0 max-w-[90%] origin-[0_0] truncate pt-[0.37rem] leading-[2.15] text-neutral-500 transition-all duration-200 ease-out -translate-y-[1.15rem] peer-focus:scale-[0.8] peer-focus:text-primary peer-data-[te-input-state-active]:-translate-y-[1.15rem] peer-data-[te-input-state-active]:scale-[0.8] motion-reduce:transition-none dark:text-neutral-200 dark:peer-focus:text-primary"
               >Confirm Password
             </label>
+            {confirmPasswordError && <span className='text-red-500'>{confirmPasswordError}</span>}
           </div>
           
 
@@ -169,7 +269,7 @@ const Login = ({ setShowLogin } ) => {
     dispatch(LOGIN_START())
     try {
       
-      const { data } = await axios.post(`${ PRODUCTION_URL || BASE_URL}/auth/login`, { email, password });
+      const { data } = await axios.post(`${BASE_URL}/auth/login`, { email, password });
   
       if(data) {
          const { email, username, img, _id, accessToken } = data;
@@ -183,20 +283,25 @@ const Login = ({ setShowLogin } ) => {
     }
   };
 
-  const handleRegister = ({ email, password, confirmPassword }) => {
-    if (password !== confirmPassword) {
-      alert('Passwords do not match!');
-      return;
+  const handleRegister = async ({ username, email, password, confirmPassword, avatar }) => {
+    console.log(username, email, password, confirmPassword, avatar);
+    try {
+      const { data } = await axios.post(`${BASE_URL}/auth/register`, { username, email, password, img:avatar });
+      
+      if(data) {
+        setShowLogin(false);
+      }
+      console.log(data);
+    } catch(err) {
+      dispatch(LoginFailed(err.response.data.msg))
     }
-
-    onRegister({ email, password });
   };
 
   // console.log(setShowLogin);
   return (
-    <div className='z-[9999] left-0 fixed  bg-gray-900 bg-opacity-50 top-0 w-full h-full  flex items-center justify-center'>
+    <div className='z-[9999] left-0 fixed    bg-gray-900 bg-opacity-50 top-0 w-full h-full  flex items-center justify-center'>
       <AiOutlineClose className='absolute top-10 sm:top-0 lg:top-10 right-10 text-[2rem] font-bold cursor-pointer text-white' onClick={() => setShowLogin(false)} />
-      <div className='w-[25em] h-[85%] bg-[#1a0404] shadow-md'>
+      <div className='w-[25em] h-full bg-[#1a0404] shadow-md'>
       <div>
       <h2 className='text-[2rem] text-center text-white font-mono font-bold my-4'>{isLogin ? 'Login' : 'Register'}</h2>
       {isLogin ? (

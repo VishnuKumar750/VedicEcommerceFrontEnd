@@ -59,7 +59,7 @@ const Navbar = () => {
       {isAuthenticated ? (
             <div className='flex items-center'>
             <p className='text-[1rem] font-mono cursor-pointer mx-4 border-r-2 px-4'>
-            <Link to={`/Account/?id=${1}`}>
+            <Link to={`/Account/`}>
               My Account
             </Link>
             </p>

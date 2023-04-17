@@ -1,9 +1,6 @@
-import React, { useEffect } from 'react'
-import womenDress1 from '/women/womenDress1.jpg'
+import React from 'react'
 import Order from '../component/Order'
 import UserProfile from '../component/UserProfile'
-import axios from 'axios'
-import { useSelector } from 'react-redux'
 
 const Account = () => {
 

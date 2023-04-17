@@ -1,5 +1,4 @@
 import React from 'react'
-import women from '/women/womenDress1.jpg'
 
 const Card = ({item}) => {
   return (
