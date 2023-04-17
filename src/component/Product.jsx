@@ -1,120 +1,104 @@
-import React, { useEffect, useState } from 'react'
-import Card from './product/Card'
-import { BsFilter } from 'react-icons/bs'
-import { FaSearch } from 'react-icons/fa'
-import { GrClose } from 'react-icons/gr'
-import ProductPreview from './ProductPreview'
-import { useDispatch, useSelector } from 'react-redux'
-import { fetchProductsStart, fetchProductsSuccess } from '../redux/product'
-import { fetchCategoriesFailure } from '../redux/categories'
-import { ToastContainer } from 'react-toastify'
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import axios from 'axios';
+import Card from './product/Card';
+import ProductPreview from './ProductPreview';
+import { fetchProductsStart, fetchProductsSuccess } from '../redux/product';
+import { fetchCategoriesFailure } from '../redux/categories';
+import { BASE_URL, PRODUCTION_URL } from '../../constants';
+import { BsFilter } from 'react-icons/bs';
+import { FaSearch } from 'react-icons/fa';
+import { GrClose } from 'react-icons/gr';
+import { MdProductionQuantityLimits } from 'react-icons/md';
 
 const Product = () => {
-   const [ filter, setFilter ] = useState(false);
-   const [ search, setSearch ] = useState(false);
-   const [query, setQuery ] = useState('');
-   const [ activePrice, setActivePrice ] = useState(0)
-   const [ lightbox, setLightbox ] = useState(false);
-
-   const [ sort, setSort ] = useState(0);
-   const [active, setActive] = useState(0);
-   
-
-   const { products, loading } = useSelector(state => state.product);
-   const { categories } = useSelector(state => state.category);
    const dispatch = useDispatch();
 
-   const [querySearch, setQuerySearch ] = useState('');
-   const [queryCat, setQueryCat ] = useState('');
+   const { products, loading, currPage, totalPage } = useSelector((state) => state.product);
+   const { categories } = useSelector((state) => state.category);
 
-   
+   const [ currentItemPage, setCurrentItemPage ] = useState(1);
+   const [ page, setPage ] = useState(1);
+ 
+   const [filter, setFilter] = useState(false);
+   const [search, setSearch] = useState(false);
+   const [activePrice, setActivePrice] = useState(0);
+   const [lightbox, setLightbox] = useState(false);
+   const [sort, setSort] = useState(0);
+   const [active, setActive] = useState(0);
+   const [querySearch, setQuerySearch] = useState('');
+   const [queryCat, setQueryCat] = useState('');
 
-   const fetchProducts = async (search, cat) => {
+   const sortby = [{ id: 0, name: 'Default' },{ id: 1, name: 'latest' }];
+  
+    const price = [
+      { id: 0, name: 'All' },
+      { id: 1, name: '₹0.00 - ₹1,000.00' },
+      { id: 2, name: '₹1,000.00 - ₹5,000.00' },
+      { id: 3, name: '₹5,000.00 - ₹10,000.00' },
+      { id: 4, name: '₹10,000.00 - ₹15,000.00' },
+      { id: 5, name: '₹15,000.00 - ₹20,0000000.00' },
+    ];
+
+     const fetchProducts = async (search, cat, activePrice, sort, page) => {
       try {
-         dispatch(fetchProductsStart());
-         // console.log(cat);
-         
-         const result = await fetch(`https://dummyjson.com/products?limit=100`)
-         const data = await result.json();
+        dispatch(fetchProductsStart());
+        let updatedPrice = '',
+          sortedPre = '',
+          searchPre = '',
+          categ = '',
+          color = '',
+          size = '',
+          currentPage = '';
 
-         if(cat) {
-            data.products = data.products.filter(item => item.category.toLowerCase().includes(cat.toLowerCase()))
+  
+         if(page !== 0) {
+            currentPage = `&page=${page}`;
+            console.log('dkhfd ', page)
          }
-         
-         console.log(search);
-         if (search) {
-            const regex = new RegExp(search, "i"); // Create case-insensitive regex from search string
-            data.products = data.products.filter((item) => {
-              return Object.values(item).some((value) => {
-                if (typeof value === "string") {
-                  return regex.test(value); // Check if value matches the regular expression
-                }
-                return false; // Skip non-string values
-              });
-            });
-          }
 
-          console.log(activePrice);
-          if(activePrice) {
-            const selectedPrice = price[activePrice];
 
-            data.products = data.products.filter(item => {
-               if(selectedPrice === 0) {
-                  return true;
-               } else {
-                  const priceRange = selectedPrice.name.split(' - ');
-                  
-    const minPrice = parseFloat(priceRange[0].replace('₹', '').replace(',', ''));
-    const maxPrice = parseFloat(priceRange[1].replace('₹', '').replace(',', ''));
-   //  console.log(minPrice, maxPrice);
-    return (item.price >= minPrice && item.price <= maxPrice);
-               }
-            })
-          }
-         // console.log(data)
-
-         dispatch(fetchProductsStart())
-
-         setTimeout(() => {
-            dispatch(fetchProductsSuccess(data.products))
-         }, 2000);
-         
+        if (activePrice === 0) {
+          updatedPrice = '';
+        } else {
+          updatedPrice = price[activePrice].name;
+        }
+  
+        if (sort !== 0) {
+          sortedPre = `&${sortby[sort].name}`;
+        }
+  
+        if (search !== '') {
+          searchPre = `&search=${search}`;
+        }
+  
+        if (cat !== '') {
+          let newCat = cat.split('&').join('%26');
+          categ = `&category=${newCat}`;
+        }
+  
+        const base_result = await axios.get(
+          `${PRODUCTION_URL || BASE_URL}/products/?price=${updatedPrice}${sortedPre}${searchPre}${categ}${currentPage}`
+        );
+  
+        console.log(base_result.data)
+        dispatch(fetchProductsStart());
+  
+        setTimeout(() => {
+          dispatch(fetchProductsSuccess({ products: base_result.data.products, currPage: base_result.data.currentPage, totalPage: base_result.data.totalPages }));
+        }, 2000);
       } catch (error) {
-         dispatch(fetchCategoriesFailure(error.message))
+        dispatch(fetchCategoriesFailure(error.message));
       }
-
-   }
+    };
 
    
-
-
    useEffect(() => {
-      fetchProducts(querySearch, queryCat, activePrice);
-   },[querySearch, queryCat, dispatch, activePrice])
-
-
-  const sortby = [
-   {
-      id: 0, name: 'Default'
-   },
-   { id: 1, name: 'latest'}
-  ]
-
-  const price = [
-   { id: 0, name: 'All'},
-   { id: 1, name: '₹0.00 - ₹1,000.00'},
-   { id: 2, name: '₹1,000.00 - ₹5,000.00'},
-   { id: 3, name: '₹5,000.00 - ₹10,000.00'},
-   { id: 4, name: '₹10,000.00 - ₹15,000.00'},
-   { id: 5, name: '₹15,000.00 - ₹20,0000000.00'},
-  ]
+      fetchProducts(querySearch, queryCat, activePrice, sort, page);
+   },[querySearch, queryCat, dispatch, activePrice, currPage, sort, page])
 
   const handleActivePrice = (id) => {
    setActivePrice(id);
-  }
-
-  const handleSort = (id) => {
-   setSort(id);
   }
 
   const handleMenuItemClick = (item) => {
@@ -127,8 +111,19 @@ const Product = () => {
    setSearch(!search);
  }
 
- 
- 
+ const handlePrevPage = (e) => {
+   e.preventDefault();
+   if (page > 1) {
+     setPage(prev => prev - 1);
+   }
+ }
+
+ const handleNextPage = (e) => {
+   e.preventDefault()
+   if (page < totalPage) {
+     setPage(prev => prev + 1);
+   }
+ }
 
   return (
     <div className='px-[1.5em] w-full '>
@@ -199,16 +194,64 @@ const Product = () => {
          {
             loading ? 
             <div className='h-[50vh] w-full flex items-center justify-center '>
-               <h1>Loading</h1>
+            <div
+  className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] text-danger motion-reduce:animate-[spin_1.5s_linear_infinite]"
+  role="status">
+  <span
+    className="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]"
+    >Loading...</span
+  >
+</div>
             </div>
             :
+            (
+               products?.length === 0 ?
+               <>
+            <div className='h-[50vh] w-full flex items-center justify-center flex-col'>
+               <MdProductionQuantityLimits className='text-red-500 text-[8rem]  my-4'/>
+               <h1 className='text-[2rem] font-mono font-bold text-gray-900'>No Products Found</h1>
+               </div>
+               </>
+               :
+
       <div
-         className='grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grrid-cols-4 2xl:flex 2xl:flex-wrap'>
+         className='grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grrid-cols-4 2xl:flex 2xl:flex-wrap my-8'>
       {products?.map((v, i) => (
          <Card data={v} key={i} lightbox={lightbox} setLightbox={setLightbox}/>
       ))}
       </div>
+            )
          }
+
+{products?.length > 0 && (
+         <nav aria-label="Page navigation example" className="flex items-center justify-center ">
+<ul className="list-style-none flex">
+  <li onClick={handlePrevPage}>
+    <a
+      className={`relative ${page <= 1 ? 'hidden' : 'block'} ${loading ? 'hidden' : 'block'} rounded bg-transparent px-3 py-1.5 text-lg text-neutral-500 transition-all duration-300 hover:bg-neutral-100 dark:text-white dark:hover:bg-neutral-700 hover:text-white dark:hover:text-white group`}
+      href="#"
+      aria-label="Previous">
+      <span aria-hidden="true" className='text-gray-900 font-bold group-hover:text-white'>&laquo;</span>
+    </a>
+  </li>
+
+  <li >
+    <a
+      className={`block relative rounded  px-3 py-1.5 text-lg text-gray-900 transition-all duration-300 hover:bg-neutral-700  dark:hover:bg-neutral-700 dark:hover:text-white font-bold`}
+      >{page}</a
+    >
+  </li>
+  
+  <li onClick={handleNextPage}>
+    <a
+      className={`${page >= totalPage ? 'hidden' : 'block'} ${loading ? 'hidden' : 'block'} relative  rounded bg-transparent px-3 py-1.5 text-lg text-neutral-600 transition-all duration-300 hover:bg-neutral-100 dark:text-white dark:hover:bg-neutral-700 group dark:hover:text-white`}
+      aria-label="Next"
+      ><span aria-hidden="true" className='text-gray-900 font-bold group-hover:text-white'>&raquo;</span>
+    </a>
+  </li>
+</ul>
+</nav>
+)}
 
          {
             lightbox 

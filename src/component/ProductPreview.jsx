@@ -43,7 +43,7 @@ const ProductPreview = ({ lightbox, setLightbox }) => {
   }
 
   
-  const [currImg, setCurrImg ] = useState(product.thumbnail);
+  const [currImg, setCurrImg ] = useState(product?.images[0]);
 
   const incrementIndex = (index) => {
     // console.log('increment');

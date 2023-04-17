@@ -2,6 +2,8 @@ import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
    products: [],
+   currPage: 1,
+   totalPage: 1,
    loading: false,
    error: null,
 };
@@ -15,7 +17,9 @@ const productSlice = createSlice({
       },    
       fetchProductsSuccess(state, action) {
          state.loading = false;
-         state.products = action.payload;
+         state.products = action.payload.products;
+         state.currPage = action.payload.currPage;
+         state.totalPage = action.payload.totalPage;
       },    
       fetchProductsFailure(state, action) {
          state.loading = false;

@@ -2,7 +2,7 @@ import './App.css'
 import Navbar from './component/Navbar'
 import Footer from './component/Footer'
 
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { Routes, Route } from 'react-router-dom'
 import About from './pages/About'
 import Contact from './pages/Contact'
 import NotFound from './pages/NotFound'
@@ -16,7 +16,6 @@ import Account from './pages/Account'
 import { fetchCategoriesSuccess } from './redux/categories'
 import { BASE_URL, PRODUCTION_URL } from '../constants'
 import Success from './pages/Success'
-import Cookies from 'js-cookie'
 import { INITIALIZE_USER } from './redux/user'
 
 function App() {
@@ -42,10 +41,10 @@ function App() {
 
 
   return (
-    <BrowserRouter>
+    <>
     <Navbar />
     <Routes>
-      <Route path="/" element={<Home  />} />
+      <Route exact path="/" element={<Home  />} />
       <Route path="/about" element={<About />} />
       <Route path="/contact" element={<Contact />} />
       <Route path="*" element={<NotFound />} />
@@ -54,8 +53,7 @@ function App() {
       <Route path='/checkout-success' element={<Success />} />
     </Routes>
     <Footer />
-
-    </BrowserRouter>
+    </>
   )
 }
 
