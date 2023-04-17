@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import { useSelector } from 'react-redux';
-import { BASE_URL } from '../../constants';
+import { BASE_URL, PRODUCTION_URL } from '../../constants';
 import axios from 'axios';
 
 const Checkout = () => {
@@ -9,7 +9,7 @@ const Checkout = () => {
   const handleCheckout = async () => {
     // console.log(BASE_URL);
     try {
-      const res = await axios.post(`${BASE_URL}/payment/create-checkout-session`, {
+      const res = await axios.post(`${PRODUCTION_URL || BASE_URL}/payment/create-checkout-session`, {
         url: window.location.origin,
         cartItems
     })
