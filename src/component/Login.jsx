@@ -269,7 +269,7 @@ const Login = ({ setShowLogin } ) => {
     dispatch(LOGIN_START())
     try {
       
-      const { data } = await axios.post(`${BASE_URL}/auth/login`, { email, password });
+      const { data } = await axios.post(`${PRODUCTION_URL || BASE_URL}/auth/login`, { email, password });
   
       if(data) {
          const { email, username, img, _id, accessToken } = data;
@@ -286,7 +286,7 @@ const Login = ({ setShowLogin } ) => {
   const handleRegister = async ({ username, email, password, confirmPassword, avatar }) => {
     console.log(username, email, password, confirmPassword, avatar);
     try {
-      const { data } = await axios.post(`${BASE_URL}/auth/register`, { username, email, password, img:avatar });
+      const { data } = await axios.post(`${PRODUCTION_URL || BASE_URL}/auth/register`, { username, email, password, img:avatar });
       
       if(data) {
         setShowLogin(false);
