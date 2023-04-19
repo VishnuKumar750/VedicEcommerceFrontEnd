@@ -16,16 +16,17 @@ const cartSlice = createSlice({
          localStorage.setItem('cartItems', JSON.stringify(state.cartItems));
       },
       removeFromCart: (state, action) => {
-        const productId = action.payload;
-        const existingItem = state.cartItems.find(item => item.id === productId);
-        if(existingItem) {
-            state.cartItems = state.cartItems.filter(item => item.id !== productId);
-         } else {
-            console.warn(`Can't remove product (id: ${productId}) as it's not in the cart!`);
-         }
-        state.subtotal -= existingItem.total;
-        localStorage.setItem('cartItems', JSON.stringify(state.cartItems));
+         const index = action.payload;
+  const itemToRemove = state.cartItems[index];
+  if (itemToRemove) {
+    state.cartItems.splice(index, 1);
+    state.subtotal -= itemToRemove.total;
+    localStorage.setItem('cartItems', JSON.stringify(state.cartItems));
+  } else {
+    console.warn(`Can't remove product at index ${index} as it's not in the cart!`);
+  }
       },
+      
       CLEAR_CART: (state) => {
          state.cartItems = [];
          state.subtotal = 0;

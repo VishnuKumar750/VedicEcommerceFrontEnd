@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { LOGIN_START, LOGIN_SUCCESSFUL } from '../redux/user';
 import Cookies from 'js-cookie';
 import { FaUserCircle } from 'react-icons/fa';
+import { login, register } from '../api/api';
 
 
 const LoginForm = ({ onSubmit }) => {
@@ -255,53 +256,60 @@ const RegisterForm = ({ onSubmit }) => {
    );
  };
 
-const Login = ({ setShowLogin } ) => {
+const Login = ({ showLogin, setShowLogin } ) => {
 
    const [isLogin, setIsLogin] = useState(true);
    const dispatch = useDispatch();
 
-   const { isAuthenticated } = useSelector(state => state.user)
-
-   useEffect(() => {
-   }, [isAuthenticated])
+   const { loading, isAuthenticated } = useSelector(state => state.user)
 
   const handleLogin = async ({ email, password }) => {
     dispatch(LOGIN_START())
     try {
-      
-      const { data } = await axios.post(`${PRODUCTION_URL || BASE_URL}/auth/login`, { email, password });
-  
+      const data = await login({ email, password })
       if(data) {
          const { email, username, img, _id, accessToken } = data;
-         dispatch(LOGIN_SUCCESSFUL({ email, username, img, _id, accessToken }))
+         setTimeout(() => {
+           dispatch(LOGIN_SUCCESSFUL({ email, username, img, _id, accessToken }))
+         }, 2000);
       }
-  
-      isAuthenticated && setShowLogin(false);
-      console.log(data);
     } catch (error) {
-      
+      dispatch(LoginFailed(error.response.data.msg))
     }
   };
+
+  useEffect(() => {
+    if(isAuthenticated) {
+      setShowLogin(!showLogin);
+    }
+  },[isAuthenticated])
 
   const handleRegister = async ({ username, email, password, confirmPassword, avatar }) => {
     console.log(username, email, password, confirmPassword, avatar);
     try {
-      const { data } = await axios.post(`${PRODUCTION_URL || BASE_URL}/auth/register`, { username, email, password, img:avatar });
+      // const { data } = await axios.post(`${BASE_URL}/auth/register`, { username, email, password, img:avatar });
       
+      const data = await register({ username, email, password, img: avatar });
+
       if(data) {
-        setShowLogin(false);
+        setIsLogin(!isLogin);
       }
       console.log(data);
     } catch(err) {
       dispatch(LoginFailed(err.response.data.msg))
-    }
+    } 
   };
+
+  if(loading) {
+    return <div className='z-[9999] left-0 fixed    bg-gray-900 bg-opacity-50 top-0 w-full h-full  flex items-center justify-center text-white'>
+          Loading...
+    </div>
+  }
 
   // console.log(setShowLogin);
   return (
-    <div className='z-[9999] left-0 fixed    bg-gray-900 bg-opacity-50 top-0 w-full h-full  flex items-center justify-center'>
-      <AiOutlineClose className='absolute top-10 sm:top-0 lg:top-10 right-10 text-[2rem] font-bold cursor-pointer text-white' onClick={() => setShowLogin(false)} />
-      <div className='w-[25em] h-full bg-[#1a0404] shadow-md'>
+    <div className='z-[9999] left-0 fixed bg-gray-900 bg-opacity-50 top-0 w-full h-full  flex items-center justify-center' onClick={() => setShowLogin(false)}>
+      <div className='w-[25em] py-8 bg-[#1a0404] shadow-md' onClick={(e) => {e.stopPropagation()}}>
       <div>
       <h2 className='text-[2rem] text-center text-white font-mono font-bold my-4'>{isLogin ? 'Login' : 'Register'}</h2>
       {isLogin ? (

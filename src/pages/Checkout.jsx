@@ -2,30 +2,29 @@ import React, { useEffect } from 'react'
 import { useSelector } from 'react-redux';
 import { BASE_URL, PRODUCTION_URL } from '../../constants';
 import axios from 'axios';
+import { toast } from 'react-toastify';
+import { stripeCheckout } from '../api/api';
 
 const Checkout = () => {
   const { cartItems, subtotal } = useSelector(state => state.cart)
+  const { user, isAuthenticate } = useSelector(state => state.user)
 
   const handleCheckout = async () => {
-    // console.log(BASE_URL);
     try {
-      const res = await axios.post(`${PRODUCTION_URL || BASE_URL}/payment/create-checkout-session`, {
-        url: window.location.origin,
-        cartItems
-    })
-      if(res.data.url) {
-        window.location.href = res.data.url;
+      if(!isAuthenticate && !user) {
+        toast.error('You are not Logged In');
+        return; 
       }
-    } catch (error) {
-      
-    }
-    
-    // if(cartItems && cartItems.length > 0) {
-    //   console.log('checkout');
 
-    // } else {
-    //   alert('Your cart is empty');
-    // }
+    const data = await stripeCheckout({ userId: user._id, url: window.location.origin, cartItems, subtotal })
+
+    console.log(data);
+    if(data) {
+      window.location.href = data.url;
+    }
+    } catch (error) {
+      console.log(error.message)
+    }
   }
 
   return (
@@ -43,8 +42,8 @@ const Checkout = () => {
           </thead>
 
           <tbody>
-          {cartItems && cartItems?.map((product) => (
-            <tr key={product.id} className='border-b-2'>
+          {cartItems && cartItems?.map((product,i) => (
+            <tr key={i} className='border-b-2'>
               <td><img className='w-[40%]  h-full  mx-auto object-cover my-4' src={product.image} alt={product.title} /></td>
               <td className='text-[1rem] font-bold font-sans text-center ' >&#8377;{product.Price.toFixed(2)}</td>
               <td className='text-center font-bold font-sans text-[1rem]'>{product.quantity}</td>

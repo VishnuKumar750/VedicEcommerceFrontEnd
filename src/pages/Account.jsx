@@ -1,8 +1,13 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import Order from '../component/Order'
 import UserProfile from '../component/UserProfile'
+import axios from 'axios';
+import Cookies from 'js-cookie';
+import { useSelector } from 'react-redux';
+import { BASE_URL } from '../../constants';
 
 const Account = () => {
+  const { user, isAuthenticated } = useSelector((state) => state.user);
 
   return (
     <>

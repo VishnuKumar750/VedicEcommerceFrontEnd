@@ -17,21 +17,24 @@ import { fetchCategoriesSuccess } from './redux/categories'
 import { BASE_URL, PRODUCTION_URL } from '../constants'
 import Success from './pages/Success'
 import { INITIALIZE_USER } from './redux/user'
+import { fetchCategoryData } from './api/api'
 
 function App() {
   const dispatch = useDispatch();
-
-  const fetchCategoryData = async () => {
-    const response = await fetch(`${PRODUCTION_URL || BASE_URL}/categories/get`);
-    const data = await response.json();
-    // console.log(data);
-    
-    dispatch(fetchCategoriesSuccess(data[0].categories));
+  const dispatch_Categories = async () => {
+    try {
+      const res = await fetchCategoryData();
+      if(res) {
+        dispatch(fetchCategoriesSuccess(res))
+      }
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   useEffect(() => {
     dispatch(INITIALIZE_USER())
-    fetchCategoryData()
+    dispatch_Categories()
     dispatch(getCartItemsFromLocalStorage());
     dispatch(getFavouriteItemsFromLocalStorage());
   }, [dispatch]);

@@ -1,23 +1,22 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import axios from 'axios';
 import Card from './product/Card';
 import ProductPreview from './ProductPreview';
 import { fetchProductsStart, fetchProductsSuccess } from '../redux/product';
 import { fetchCategoriesFailure } from '../redux/categories';
-import { BASE_URL, PRODUCTION_URL } from '../../constants';
 import { BsFilter } from 'react-icons/bs';
 import { FaSearch } from 'react-icons/fa';
 import { GrClose } from 'react-icons/gr';
 import { MdProductionQuantityLimits } from 'react-icons/md';
+import { fetchProducts } from '../api/api';
+import { colors, price, sortby } from '../api/data';
 
 const Product = () => {
    const dispatch = useDispatch();
 
-   const { products, loading, currPage, totalPage } = useSelector((state) => state.product);
+   const { products, loading, totalPage } = useSelector((state) => state.product);
    const { categories } = useSelector((state) => state.category);
 
-   const [ currentItemPage, setCurrentItemPage ] = useState(1);
    const [ page, setPage ] = useState(1);
  
    const [filter, setFilter] = useState(false);
@@ -27,75 +26,22 @@ const Product = () => {
    const [sort, setSort] = useState(0);
    const [active, setActive] = useState(0);
    const [querySearch, setQuerySearch] = useState('');
-   const [queryCat, setQueryCat] = useState('');
+   const [queryCat, setQueryCat] = useState(''); 
 
-   const sortby = [{ id: 0, name: 'Default' },{ id: 1, name: 'latest' }];
-  
-    const price = [
-      { id: 0, name: 'All' },
-      { id: 1, name: '₹0.00 - ₹1,000.00' },
-      { id: 2, name: '₹1,000.00 - ₹5,000.00' },
-      { id: 3, name: '₹5,000.00 - ₹10,000.00' },
-      { id: 4, name: '₹10,000.00 - ₹15,000.00' },
-      { id: 5, name: '₹15,000.00 - ₹20,0000000.00' },
-    ];
-
-     const fetchProducts = async (search, cat, activePrice, sort, page) => {
-      try {
-        dispatch(fetchProductsStart());
-        let updatedPrice = '',
-          sortedPre = '',
-          searchPre = '',
-          categ = '',
-          color = '',
-          size = '',
-          currentPage = '';
-
-  
-         if(page !== 0) {
-            currentPage = `&page=${page}`;
-            console.log('dkhfd ', page)
-         }
-
-
-        if (activePrice === 0) {
-          updatedPrice = '';
-        } else {
-          updatedPrice = price[activePrice].name;
+    useEffect(() => {
+      const getProducts = async () => {
+        try {
+          dispatch(fetchProductsStart());
+          const data = await fetchProducts({ search: querySearch, category: queryCat, activePrice, sortBy: sort, page });
+          dispatch(fetchProductsSuccess({ products: data.products, currPage: data.currentPage, totalPage: data.totalPages }));
+        } catch (error) {
+          dispatch(fetchCategoriesFailure(error.message));
         }
+      };
   
-        if (sort !== 0) {
-          sortedPre = `&${sortby[sort].name}`;
-        }
+      getProducts();
+    }, [querySearch, queryCat, activePrice, sort, page]);
   
-        if (search !== '') {
-          searchPre = `&search=${search}`;
-        }
-  
-        if (cat !== '') {
-          let newCat = cat.split('&').join('%26');
-          categ = `&category=${newCat}`;
-        }
-  
-        const base_result = await axios.get(
-          `${PRODUCTION_URL || BASE_URL}/products/?price=${updatedPrice}${sortedPre}${searchPre}${categ}${currentPage}`
-        );
-  
-        console.log(base_result.data)
-        dispatch(fetchProductsStart());
-  
-        setTimeout(() => {
-          dispatch(fetchProductsSuccess({ products: base_result.data.products, currPage: base_result.data.currentPage, totalPage: base_result.data.totalPages }));
-        }, 2000);
-      } catch (error) {
-        dispatch(fetchCategoriesFailure(error.message));
-      }
-    };
-
-   
-   useEffect(() => {
-      fetchProducts(querySearch, queryCat, activePrice, sort, page);
-   },[querySearch, queryCat, dispatch, activePrice, currPage, sort, page])
 
   const handleActivePrice = (id) => {
    setActivePrice(id);
@@ -124,6 +70,11 @@ const Product = () => {
      setPage(prev => prev + 1);
    }
  }
+
+const [activeColor, setActiveColor] = useState('');
+const handleActiveColor = (name) => {
+  setActiveColor(name);
+}
 
   return (
     <div className='px-[1.5em] w-full '>
@@ -188,6 +139,20 @@ const Product = () => {
                      ))}
                   </ul>
                </div>
+
+               <div className=''>
+        <h1 className='text-[1.3rem] font-bold py-4'>Colors</h1>
+        <div className="grid grid-cols-5 gap-2 w-[12em]">
+          {colors.map((v, i) => (
+            <div
+              key={v.id}
+              className={`cursor-pointer w-8 h-8 ${activeColor === v.name ? 'border-2 border-gray-800' : ''}`}
+              style={{ backgroundColor: v.code }}
+              onClick={() => handleActiveColor(v.name)}
+            ></div>
+          ))}
+        </div>
+              </div>
          </div>
 
          {/* display products */}

@@ -12,8 +12,6 @@ const Cart = ({ showCart, setShowCart}) => {
    const RedirectToCheckout = () => {
       setShowCart(!showCart)
       if(cartItems && cartItems.length > 0) {
-         console.log(showCart)
-         console.log(showCart)
          setTimeout(() => {
             navigate('/checkout-Product');
          }, 2000);
@@ -32,7 +30,7 @@ const Cart = ({ showCart, setShowCart}) => {
       <div className='w-[18em] px-2 mx-auto h-[60vh] overflow-y-scroll'>
          {
             cartItems?.map((v, i) => (
-               <CartCard key={i} id={v.id} title={v.title} image={v.image} Price={v.Price} quantity={v.quantity} />
+               <CartCard key={i} index={i} title={v.title} image={v.image} Price={v.Price} quantity={v.quantity} />
             ))
          }
       </div>

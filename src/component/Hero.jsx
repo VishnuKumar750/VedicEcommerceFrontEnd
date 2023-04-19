@@ -20,7 +20,7 @@ const Hero = () => {
     setIndex(index);
   }
   return (
-    <div className='w-full h-[90vh] bg-cover  bg-no-repeat relative' style={{ backgroundImage: `url(${cate[index].image}) `}}>
+    <div className='w-full h-[90vh] md:h-[30em] lg:h-[30em] bg-cover  bg-no-repeat relative' style={{ backgroundImage: `url(${cate[index].image}) `}}>
       <div className='absolute top-64 left-0 w-full flex justify-between z-[99]'>
       <FaCaretLeft className='text-[3rem] cursor-pointer' onClick={() => decrementIndex(index)}/>
       <FaCaretRight className='text-[3rem] cursor-pointer' onClick={() => incrementIndex(index)}/>

@@ -126,7 +126,7 @@ const Navbar = () => {
       }
 
       {showLogin && 
-      <Login setShowLogin={setShowLogin} />
+      <Login showLogin={showLogin} setShowLogin={setShowLogin} />
       }
     </header>
   )
