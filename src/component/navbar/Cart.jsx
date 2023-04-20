@@ -2,8 +2,9 @@ import React from 'react'
 
 import { GrClose } from 'react-icons/gr'
 import CartCard from './CartCard'
-import { Link, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { useSelector } from 'react-redux'
+import { toast } from 'react-toastify'
 
 const Cart = ({ showCart, setShowCart}) => {
    const { cartItems, subtotal } = useSelector(state => state.cart)
@@ -16,7 +17,7 @@ const Cart = ({ showCart, setShowCart}) => {
             navigate('/checkout-Product');
          }, 2000);
       } else {
-         alert('Your cart is empty');
+         toast.error('Your cart is empty');
       }
    }
 

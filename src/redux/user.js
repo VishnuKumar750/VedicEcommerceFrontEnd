@@ -37,6 +37,23 @@ const userSlice = createSlice({
          localStorage.removeItem('user')
          Cookies.remove('accessToken')
       },
+      REGISTER_START: (state) => {
+         state.loading = true;
+      },
+      REGISTER_SUCCESSFUL: (state, action) => {
+         const { email, username, img, _id, accessToken } = action.payload;
+         state.loading = false;
+         state.user = { email, username, img, _id };
+         state.isAuthenticated = true;
+         localStorage.setItem('user', JSON.stringify({ email, username, img, _id }))
+         Cookies.set('accessToken', accessToken, { expires: 3 })
+      },
+      REGISTER_FAILED: (state, action) => {
+         state.loading = false;
+         state.user = [];
+         state.isAuthenticated = false;
+         state.error = action.payload;
+      },
       INITIALIZE_USER: (state) => {
          const storedUser = localStorage.getItem("user");
          const accessToken = Cookies.get("accessToken");
@@ -52,5 +69,5 @@ const userSlice = createSlice({
    }  
 })
 
-export const { LOGIN_START, LOGIN_SUCCESSFUL, LOGIN_FAILED, LOGOUT, INITIALIZE_USER } = userSlice.actions;
+export const { LOGIN_START, LOGIN_SUCCESSFUL, LOGIN_FAILED, LOGOUT, INITIALIZE_USER, REGISTER_FAILED, REGISTER_START, REGISTER_SUCCESSFUL } = userSlice.actions;
 export const userReducer = userSlice.reducer;

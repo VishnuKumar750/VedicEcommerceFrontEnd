@@ -1,6 +1,5 @@
 import React, { useMemo, useState } from 'react'
-import { FaMinus, FaPlus, FaCaretRight, FaCaretLeft, FaStar, FaStarHalfAlt, FaRegStar } from 'react-icons/fa'
-import { AiOutlineClose } from 'react-icons/ai';
+import { FaMinus, FaPlus } from 'react-icons/fa'
 import { useDispatch, useSelector } from 'react-redux'
 import {  addToCart } from '../redux/cart'
 import { toast } from 'react-toastify'
@@ -11,15 +10,10 @@ import ProductImages from './ProductPreview/ProductImages';
 
 const ProductPreview = ({ lightbox, setLightbox }) => {
   const [ quantity, setQuantity ] = useState(1);
-  const [index, setIndex] = useState(0);
   const dispatch = useDispatch();
-
   const { product }  = useSelector(state => state.CurrP);
-  const fullStars = useMemo(() => Math.floor(product?.rating), [product?.rating]);
-  const halfStars = useMemo(() => product?.rating % 1 !== 0, [product?.rating]);
-  const [ size, setSize ] = useState('');
-  const [ color, setColor ] = useState('');
-  
+  const [selectedColor, setSelectedColor] = useState(product.color[0]);
+  const [selectedSize, setSelectedSize] = useState(product.size[0]);
 
   const increment = () => {
     setQuantity(prev => prev + 1);
@@ -31,30 +25,6 @@ const ProductPreview = ({ lightbox, setLightbox }) => {
     }
   }
  
-
-  const [currImg, setCurrImg ] = useState(product?.images[0]);
-
-  const incrementIndex = (index) => {
-    // console.log('increment');
-    index++;
-    index = index % product.images.length;
-    setIndex(index);
-    setCurrImg(product.images[index]);
-  }
-
-  const decrementIndex = (index) => {
-    console.log('decrement');
-    index--;
-    if(index < 0) index = product.images.length - 1;
-    index =  index % product.images.length;
-    setIndex(index);
-    setCurrImg(product.images[index]);
-  }
-
-
-  const [selectedColor, setSelectedColor] = useState(product.color[0]);
-  const [selectedSize, setSelectedSize] = useState(product.size[0]);
-
   const handleColorSelect = (color) => {
     setSelectedColor(color);
   };
@@ -64,8 +34,6 @@ const ProductPreview = ({ lightbox, setLightbox }) => {
   };
 
   const handleCart = () => {
-    console.log(selectedColor);
-    
     const item = { 
       id: product._id,
       title: product.title,
@@ -87,8 +55,6 @@ const ProductPreview = ({ lightbox, setLightbox }) => {
       toast.error('Please select a color and size')
     }
   }
-
-  
 
   return (
     <div className="z-[9999] left-0 fixed  bg-gray-900 bg-opacity-50 top-0 w-full h-full  overflow-y-scroll" onClick={() => setLightbox(!lightbox)}>

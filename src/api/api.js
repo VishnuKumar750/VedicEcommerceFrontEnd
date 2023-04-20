@@ -1,5 +1,5 @@
 import axios from "axios";
-import { PRODUCTION_URL } from "../../constants";
+import { BASE_URL, PRODUCTION_URL } from "../../constants";
 
 export const fetchCategoryData = async () => {
    const response = await fetch(`${PRODUCTION_URL}/categories/get`);
@@ -64,17 +64,21 @@ export const login = async ({email, password}) => {
 }
 
 // checkout
-export const stripeCheckout = async ({ userId, url, cartItems, subtotal }) => {
+export const stripeCheckout = async ({ userId, url, cartItems, subtotal, token }) => {
   try {
-    console.log(url);
     const res = await axios.post(`${PRODUCTION_URL}/payment/create-checkout-session`, {
       userId,
       url,
       cartItems, 
       subtotal
+  }, {
+    headers: {
+      'Content-Type': 'application/json',
+      token: `Bearer ${token}`
+    }
   })
   return res.data;
-  } catch(err) {
+  } catch(error) {
     throw new Error(error.message);
   }
 }

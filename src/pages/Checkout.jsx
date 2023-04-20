@@ -1,9 +1,8 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import { useSelector } from 'react-redux';
-import { BASE_URL, PRODUCTION_URL } from '../../constants';
-import axios from 'axios';
 import { toast } from 'react-toastify';
 import { stripeCheckout } from '../api/api';
+import Cookies from 'js-cookie';
 
 const Checkout = () => {
   const { cartItems, subtotal } = useSelector(state => state.cart)
@@ -15,8 +14,8 @@ const Checkout = () => {
         toast.error('You are not Logged In');
         return; 
       }
-
-    const data = await stripeCheckout({ userId: user._id, url: window.location.origin, cartItems, subtotal })
+    const accessToken = Cookies.get('accessToken');
+    const data = await stripeCheckout({ userId: user._id, url: window.location.origin, cartItems, subtotal, token:accessToken  })
 
     console.log(data);
     if(data) {

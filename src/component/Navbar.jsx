@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react'
-import { FaSearch, FaShoppingCart, FaRegHeart } from 'react-icons/fa'
+import { FaShoppingCart, FaRegHeart } from 'react-icons/fa'
 import { FiMenu } from 'react-icons/fi'
 import { GrClose } from 'react-icons/gr'
 import Head from './navbar/Head'
 import NavList from './navbar/NavList'
 import Cart from './navbar/cart'
-import { Link, useParams } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import Fav from './navbar/Fav'
 import Login from './Login'
@@ -110,7 +110,7 @@ const Navbar = () => {
       </div>
 
       <div className={`sm:hidden transform transition-all  ${openMenu ? 'translate-y-200': 'hidden'} `}>
-         <Head setShowLogin={setShowLogin} />
+         <Head showLogin={showLogin} setShowLogin={setShowLogin} />
          <NavList menu={menu} />
       </div>
       {

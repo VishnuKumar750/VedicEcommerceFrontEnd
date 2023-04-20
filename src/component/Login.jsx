@@ -1,10 +1,6 @@
 import React, { useEffect, useState } from 'react'
-import { AiOutlineClose } from 'react-icons/ai';
-import { BASE_URL, PRODUCTION_URL } from '../../constants';
-import axios from 'axios';
 import { useDispatch, useSelector } from 'react-redux';
-import { LOGIN_START, LOGIN_SUCCESSFUL } from '../redux/user';
-import Cookies from 'js-cookie';
+import { LOGIN_START, LOGIN_SUCCESSFUL, REGISTER_FAILED, REGISTER_START, REGISTER_SUCCESSFUL } from '../redux/user';
 import { FaUserCircle } from 'react-icons/fa';
 import { login, register } from '../api/api';
 
@@ -73,8 +69,6 @@ const LoginForm = ({ onSubmit }) => {
    );
  };
 
-
- 
 const RegisterForm = ({ onSubmit }) => {
    const [email, setEmail] = useState('');
    const [emailError, setEmailError] = useState('');
@@ -285,24 +279,31 @@ const Login = ({ showLogin, setShowLogin } ) => {
   },[isAuthenticated])
 
   const handleRegister = async ({ username, email, password, confirmPassword, avatar }) => {
-    console.log(username, email, password, confirmPassword, avatar);
+    dispatch(REGISTER_START())
     try {
-      // const { data } = await axios.post(`${BASE_URL}/auth/register`, { username, email, password, img:avatar });
-      
       const data = await register({ username, email, password, img: avatar });
 
       if(data) {
-        setIsLogin(!isLogin);
+        const { email, username, img, _id, accessToken } = data;
+        setTimeout(() => {
+          dispatch(REGISTER_SUCCESSFUL({ email, username, img, _id, accessToken }))
+        }, 2000);
       }
-      console.log(data);
     } catch(err) {
-      dispatch(LoginFailed(err.response.data.msg))
+      dispatch(REGISTER_FAILED(err.response.data.msg))
     } 
   };
 
   if(loading) {
     return <div className='z-[9999] left-0 fixed    bg-gray-900 bg-opacity-50 top-0 w-full h-full  flex items-center justify-center text-white'>
-          Loading...
+    <div
+    className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] text-secondary motion-reduce:animate-[spin_1.5s_linear_infinite]"
+    role="status">
+    <span
+      className="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]"
+      >Loading...</span
+    >
+  </div>
     </div>
   }
 
