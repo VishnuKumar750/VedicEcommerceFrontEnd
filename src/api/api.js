@@ -20,16 +20,26 @@ export const fetchCategoryData = async () => {
 };
 
 // Fetch All Products -> search, category, price, sort, page, limit, color, size
-export const fetchProducts = async ({ search, category, activePrice, sortBy, page }) => {
+export const fetchProducts = async ({ search, category, activePrice, sortBy, page, color }) => {
   try {
+    console.log(color);
     const price = activePrice === 0 ? '' : `&price=${activePrice}`;
     const sort = sortBy === 0 ? '' : `&${sortBy}`;
     const searchParam = search ? `&search=${search}` : '';
+
+    if(category) {
+      if(category === 'all') {
+        category = '';
+      } else {
+        category = category.split('&').join('%26');
+      }
+    }
     const categoryParam = category ? `&category=${category}` : '';
     const pageParam = page ? `&page=${page}` : '';
+    const colorParam = color ? `&color=${color}` : '';
 
     const response = await axios.get(
-      `${PRODUCTION_URL}/products/?${price}${sort}${searchParam}${categoryParam}${pageParam}`
+      `${PRODUCTION_URL}/products/?${price}${sort}${searchParam}${categoryParam}${pageParam}${colorParam}`
     );
 
     return response.data;

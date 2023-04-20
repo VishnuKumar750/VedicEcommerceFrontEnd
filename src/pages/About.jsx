@@ -1,11 +1,27 @@
 import React from 'react'
-import about from '/about/about.jpg'
+import aboutImage from '/about/about.jpg'
 import story from '/about/story.jpg'
 import Banner from '../component/Banner'
+import storeIcon from '/icons/store.png'
+import { Helmet } from 'react-helmet'
 
 const About = () => {
   return (
     <div>
+    <Helmet>
+        <title>About Us - Vedic E-Commerce Store</title>
+        <meta name="description" content="Learn more about Vedic E-Commerce Store and our mission to provide the best products to our customers." />
+        <meta name="keywords" content="vedic, ecommerce, about us, mission" />
+        <link rel="icon" type="image/png" href={storeIcon} sizes="32x32" />
+        <meta property="og:title" content="About Us - Vedic E-Commerce Store" />
+        <meta property="og:description" content="Learn more about Vedic E-Commerce Store and our mission to provide the best products to our customers." />
+        <meta property="og:image" content={aboutImage} />
+        <meta property="og:url" content="https://example.com/about" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="About Us - Vedic E-Commerce Store" />
+        <meta name="twitter:description" content="Learn more about Vedic E-Commerce Store and our mission to provide the best products to our customers." />
+        <meta name="twitter:image" content={aboutImage} />
+      </Helmet>
     <div className='w-full h-[50vh]'>
       <Banner title={'About Us'} />
     </div>

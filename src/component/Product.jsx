@@ -27,20 +27,31 @@ const Product = () => {
    const [active, setActive] = useState(0);
    const [querySearch, setQuerySearch] = useState('');
    const [queryCat, setQueryCat] = useState(''); 
+const [activeColor, setActiveColor] = useState('');
 
     useEffect(() => {
       const getProducts = async () => {
         try {
           dispatch(fetchProductsStart());
-          const data = await fetchProducts({ search: querySearch, category: queryCat, activePrice, sortBy: sort, page });
-          dispatch(fetchProductsSuccess({ products: data.products, currPage: data.currentPage, totalPage: data.totalPages }));
+
+          if(!filter) {
+            setQuerySearch('');
+            setActivePrice(0);
+            setSort(0);
+            setActiveColor('');
+          }
+
+          const data = await fetchProducts({ search: querySearch, category: queryCat, activePrice, sortBy: sort, page, color:activeColor });
+          setTimeout(() => {
+            dispatch(fetchProductsSuccess({ products: data.products, currPage: data.currentPage, totalPage: data.totalPages }));
+          }, 2000);
         } catch (error) {
           dispatch(fetchCategoriesFailure(error.message));
         }
       };
   
       getProducts();
-    }, [querySearch, queryCat, activePrice, sort, page]);
+    }, [querySearch, queryCat, activePrice, sort, page, activeColor, filter]);
   
 
   const handleActivePrice = (id) => {
@@ -71,7 +82,6 @@ const Product = () => {
    }
  }
 
-const [activeColor, setActiveColor] = useState('');
 const handleActiveColor = (name) => {
   setActiveColor(name);
 }

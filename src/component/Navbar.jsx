@@ -75,7 +75,7 @@ const Navbar = () => {
     </div>
       <div className='flex items-center justify-between p-3 px-[2em] shadow-sm'>
       <div className='flex items-center'>
-      <h1 className='text-3xl'>VEDIC</h1>
+      <h1 className='text-3xl font-bold font-serif'>VEDIC</h1>
       <ul className='hidden sm:flex items-center justify-space mx-6'>
          {menu && menu?.map((v) => (
            <Link key={v.id} to={v.link}>

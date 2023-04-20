@@ -3,6 +3,8 @@ import { useDispatch, useSelector } from 'react-redux'
 import { CLEAR_CART } from '../redux/cart';
 import { Link, useNavigate } from 'react-router-dom';
 import paymentSuccess from '/about/success.svg'
+import { Helmet } from 'react-helmet';
+import successIcon from '/icons/success.png';
 
 const Success = () => {
   const dispatch = useDispatch()
@@ -19,6 +21,12 @@ const Success = () => {
 
 
   return (
+    <>
+    <Helmet>
+  <title>Success Page - Vedic Store</title>
+  <meta name="description" content="Thank you for purchasing our products. We are grateful that you became a part of Vedic family." />
+  <link rel="icon" type="image/png" href={successIcon} sizes="16x16" />
+</Helmet>
     <div className='w-full h-full bg-gray-400 fixed top-0 z-[999]'>
     <div className='w-full h-full fixed top-0 z-[99999]  bg-black bg-opacity-30 flex items-center justify-center '>
       <div className='h-[24em] py-4 px-3 w-[70%] flex flex-col items-center justify-center bg-white shadow-xl'>
@@ -35,6 +43,7 @@ const Success = () => {
 
     </div>
     </div>
+    </>
   )
 }
 

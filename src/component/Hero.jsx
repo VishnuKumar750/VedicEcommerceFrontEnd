@@ -1,8 +1,5 @@
 import React, { useState } from 'react'
-
-import women  from '/women/women.jpg'
-
-import { FaMinus, FaPlus, FaCaretRight, FaCaretLeft } from 'react-icons/fa'
+import { FaCaretRight, FaCaretLeft } from 'react-icons/fa'
 import { cate } from '../../dummyData'
 
 const Hero = () => {

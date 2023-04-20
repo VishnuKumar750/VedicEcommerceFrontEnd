@@ -3,6 +3,8 @@ import { useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 import { stripeCheckout } from '../api/api';
 import Cookies from 'js-cookie';
+import { Helmet } from 'react-helmet';
+import checkout from '/icons/checkout.png';
 
 const Checkout = () => {
   const { cartItems, subtotal } = useSelector(state => state.cart)
@@ -27,6 +29,13 @@ const Checkout = () => {
   }
 
   return (
+    <>
+    <Helmet>
+    <title>Checkout - Vedic E-Commerce Store</title>
+    <meta name="description" content="Checkout your products at My Awesome E-Commerce Store" />
+    <meta name="keywords" content="ecommerce, checkout, payment" />
+    <link rel="icon" href={checkout} type="image/png" sizes="32x32" />
+  </Helmet>
     <div>
       <h1 className='text-[2rem] font-serif font-bold mx-8 sm:pt-[4em]'>Cart</h1>
       <div className='mx-8 border-2 border-gray-200'>
@@ -59,6 +68,7 @@ const Checkout = () => {
         </div>
       </div>
     </div>
+    </>
   )
 }
 
